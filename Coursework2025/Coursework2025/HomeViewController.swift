@@ -104,21 +104,10 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func startProgramm() {
-        print("I start programm")
+        navigationController?.pushViewController(CanvasViewController(), animated: true)
     }
     
-    func setupBackground() {
-        let gradientLayer = CAGradientLayer()
-        
-        gradientLayer.colors = [UIColor.systemBlue.cgColor,
-                                UIColor.white.cgColor]
-        
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
-        gradientLayer.frame = view.bounds
-        
-        view.layer.insertSublayer(gradientLayer, at: 0)
-    }
+    
     
     func setupTitleLabel() {
         view.addSubview(titleLabel)
@@ -193,3 +182,17 @@ class HomeViewController: UIViewController {
     
 }
 
+extension UIViewController {
+    func setupBackground() {
+        let gradientLayer = CAGradientLayer()
+        
+        gradientLayer.colors = [UIColor.systemBlue.cgColor,
+                                UIColor.white.cgColor]
+        
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
+        gradientLayer.frame = view.bounds
+        
+        view.layer.insertSublayer(gradientLayer, at: 0)
+    }
+}
