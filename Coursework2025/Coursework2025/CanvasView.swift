@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CanvasViewController: UIViewController {
+class CanvasView: UIViewController {
     
     var scale = 1
     

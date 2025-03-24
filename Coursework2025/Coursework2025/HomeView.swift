@@ -7,8 +7,10 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
-
+class HomeView: UIViewController {
+    
+    var viewModel = HomeViewModel()
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Добро пожаловать в\n Раскрой-Упаковку"
@@ -100,11 +102,16 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func chooseFile() {
-        print("I chose file")
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.json])
+                documentPicker.delegate = self
+                documentPicker.allowsMultipleSelection = false
+                
+                present(documentPicker, animated: true, completion: nil)
     }
     
     @objc private func startProgramm() {
-        navigationController?.pushViewController(CanvasViewController(), animated: true)
+        navigationController?.pushViewController(CanvasView(), animated: true)
+        viewModel.decodeFile()
     }
     
     
@@ -194,5 +201,28 @@ extension UIViewController {
         gradientLayer.frame = view.bounds
         
         view.layer.insertSublayer(gradientLayer, at: 0)
+    }
+}
+
+extension HomeView: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let selectedFileURL = urls.first else { return }
+        
+  
+        do {
+            let fileContent = try String(contentsOf: selectedFileURL, encoding: .utf8)
+            print("File content: \(fileContent)")
+            
+            
+            if let jsonData = fileContent.data(using: .utf8) {
+                
+            }
+        } catch {
+            print("Error reading file: \(error)")
+        }
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        print("Document picker was cancelled")
     }
 }

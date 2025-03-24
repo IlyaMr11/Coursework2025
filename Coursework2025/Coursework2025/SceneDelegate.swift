@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
     
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            let homeVC = HomeViewController()
+            let homeVC = HomeView()
             let navigationVC = UINavigationController(rootViewController: homeVC)
             
             self.window?.rootViewController = navigationVC
