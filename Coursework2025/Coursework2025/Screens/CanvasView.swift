@@ -9,7 +9,7 @@ import UIKit
 
 class CanvasView: UIViewController {
     
-    var scale = 1
+    var viewModel: HomeViewModel?
     
     private lazy var canvasView: UIView = {
         let view = UIView()
@@ -33,6 +33,7 @@ class CanvasView: UIViewController {
         label.textColor = .white
         return label
     }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

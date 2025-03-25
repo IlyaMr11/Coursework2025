@@ -110,7 +110,9 @@ class HomeView: UIViewController {
     }
     
     @objc private func startProgramm() {
-        navigationController?.pushViewController(CanvasView(), animated: true)
+        let canvasView = CanvasView()
+        canvasView.viewModel = viewModel
+        navigationController?.pushViewController(canvasView, animated: true)
         viewModel.decodeFile()
     }
     
