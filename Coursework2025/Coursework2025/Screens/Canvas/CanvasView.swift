@@ -6,10 +6,17 @@
 //
 
 import UIKit
+import Combine
 
 class CanvasView: UIViewController {
     
-    var viewModel: HomeViewModel?
+    var viewModel: ViewModel? {
+        didSet {
+            bindViewModel()
+        }
+    }
+    
+    private var cancellables = Set<AnyCancellable>()
     
     private lazy var canvasView: UIView = {
         let view = UIView()
@@ -34,6 +41,13 @@ class CanvasView: UIViewController {
         return label
     }()
     
+    private lazy var progressView: UIActivityIndicatorView = {
+        let progress = UIActivityIndicatorView()
+        progress.style = .large
+        progress.color = .darkBlue
+        return progress
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,11 +56,50 @@ class CanvasView: UIViewController {
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupLoading()
+    }
+    
+    func bindViewModel() {
+        guard let viewModel else { return }
+
+        
+        viewModel.$resultView
+            .sink { [weak self] newView in
+                guard let self else { return }
+                
+                if let newView {
+                    self.canvasView.subviews.forEach { $0.removeFromSuperview() }
+                    progressView.isHidden = true
+                    newView.center = self.canvasView.center
+                    self.canvasView.addSubview(newView)
+                }
+            }
+            .store(in: &cancellables)
+            
+    }
+    
     func setupUI() {
         setupBackground()
         setupHintLabel()
         setupScaleLabel()
         setupCanvas()
+    }
+    
+    func setupLoading() {
+        canvasView.addSubview(progressView)
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            progressView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            progressView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            progressView.widthAnchor.constraint(equalToConstant: 100),
+            progressView.heightAnchor.constraint(equalToConstant: 100)
+        ])
+        
+        progressView.startAnimating()
+        
     }
     
     func setupHintLabel() {

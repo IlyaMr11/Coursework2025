@@ -15,6 +15,7 @@ final class CalculationLayer {
     private init() {}
     
     func calculate(data: DataModel) -> DataModel {
+        sleep(2)
         return data
     }
 }

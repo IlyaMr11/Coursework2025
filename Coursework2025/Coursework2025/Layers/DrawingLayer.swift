@@ -15,8 +15,12 @@ final class DrawingLayer {
     
     private init() {}
     
+    @MainActor
     func draw(data: DataModel) -> UIView {
-        return UIView()
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
+        view.backgroundColor = .yellow
+        
+        return view
     }
 }
 

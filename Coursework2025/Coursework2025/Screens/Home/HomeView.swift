@@ -9,7 +9,7 @@ import UIKit
 
 class HomeView: UIViewController {
     
-    var viewModel = HomeViewModel()
+    var viewModel = ViewModel()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -30,14 +30,18 @@ class HomeView: UIViewController {
         button.backgroundColor = .darkBlue
         button.titleLabel?.textColor = .white
         button.addTarget(self, action: #selector(chooseFile), for: .touchUpInside)
+        button.addTarget(self, action: #selector(comeback(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(changeSize(sender:)), for: .touchDown)
         return button
     }()
     
     private lazy var colorSegmentedController: UISegmentedControl = {
         let segment = UISegmentedControl(items: ["Черно-Белая", "Разноцветная"])
         segment.layer.cornerRadius = 15
+        segment.selectedSegmentIndex = 0
         segment.backgroundColor = .darkBlue
         segment.tintColor = .white
+        segment.addTarget(self, action: #selector(changeColor), for: .valueChanged)
         
         let normalAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.white,
@@ -74,6 +78,8 @@ class HomeView: UIViewController {
         button.layer.cornerRadius = 15
         button.backgroundColor = .darkBlue
         button.addTarget(self, action: #selector(startProgramm), for: .touchUpInside)
+        button.addTarget(self, action: #selector(comeback(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(changeSize(sender:)), for: .touchDown)
         return button
     }()
     
@@ -116,7 +122,9 @@ class HomeView: UIViewController {
         viewModel.decodeFile()
     }
     
-    
+    @objc private func changeColor() {
+        viewModel.color = colorSegmentedController.selectedSegmentIndex
+    }
     
     func setupTitleLabel() {
         view.addSubview(titleLabel)
@@ -191,21 +199,6 @@ class HomeView: UIViewController {
     
 }
 
-extension UIViewController {
-    func setupBackground() {
-        let gradientLayer = CAGradientLayer()
-        
-        gradientLayer.colors = [UIColor.systemBlue.cgColor,
-                                UIColor.white.cgColor]
-        
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
-        gradientLayer.frame = view.bounds
-        
-        view.layer.insertSublayer(gradientLayer, at: 0)
-    }
-}
-
 extension HomeView: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let selectedFileURL = urls.first else { return }
@@ -217,7 +210,8 @@ extension HomeView: UIDocumentPickerDelegate {
             
             
             if let jsonData = fileContent.data(using: .utf8) {
-                
+                let data = try JSONDecoder().decode(DataModel.self, from: jsonData)
+                viewModel.data = data
             }
         } catch {
             print("Error reading file: \(error)")

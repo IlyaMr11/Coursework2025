@@ -61,14 +61,17 @@ class MockDecoder {
 }
 """
     
-    static func mockDecode() {
-        if let jsonData = mockJSONstring.data(using: .utf8) {
-            do {
-                let decodedData = try JSONDecoder().decode(DataModel.self, from: jsonData)
-                print("Decoded data: \(decodedData)")
-            } catch {
-                print("Error decoding JSON: \(error)")
-            }
+    static func mockDecode() async throws -> DataModel {
+        guard let jsonData = mockJSONstring.data(using: .utf8) else {
+            throw NSError(domain: "Error", code: 1, userInfo: nil)
+        }
+        
+        do {
+            let decodedData = try JSONDecoder().decode(DataModel.self, from: jsonData)
+            return decodedData
+        } catch {
+            print("Error decoding JSON: \(error)")
+            throw error
         }
     }
 }
