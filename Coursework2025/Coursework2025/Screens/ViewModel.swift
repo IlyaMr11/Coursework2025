@@ -13,15 +13,22 @@ class ViewModel: ObservableObject {
     @Published var color: Int = 0
     @Published var resultView: UIView?
     @Published var resultData: DataModel?
-    @Published var alert: Alert?
+    @Published var alert: UIAlertController?
+    @Published var data: DataModel?
     
+    let router: Router
+    
+    init(router: Router) {
+        self.router = router
+    }
     
     func decodeFile(url: URL) {
-     
+        self.data = nil
+        
         Task {
             do {
                 let data = try DecodeLayer.decode(url: url)
-                await self.startCalculation(data: data)
+                self.data = data
             } catch {
                 if let error = error as? AppErrors {
                     switch error {
@@ -38,6 +45,20 @@ class ViewModel: ObservableObject {
             
  
         
+    }
+    
+    func startProgramm()  {
+        guard let data = self.data else {
+            alert = AppAlerts.fileNotSelected
+            return
+        }
+        
+        router.showCanvasView()
+        
+       
+        Task {
+            await startCalculation(data: data)
+        }
     }
     
     func startCalculation(data: DataModel) async {

@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 class HomeView: UIViewController {
     
-    var viewModel = ViewModel()
+    var viewModel: ViewModel?
+    
+    var cancellables: Set<AnyCancellable> = []
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -96,6 +99,42 @@ class HomeView: UIViewController {
         super.viewDidLoad()
         title = "Главная"
         setupUI()
+        bindViewModel()
+    }
+    
+    func bindViewModel() {
+        bindAlert()
+        bindFileName()
+    }
+    
+   
+    func bindAlert() {
+        
+        viewModel?.$alert
+            .sink { alert in
+                RunLoop.main.perform {
+                    if let alert {
+                        self.present(alert, animated: true)
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+
+    func bindFileName() {
+        viewModel?.$data
+            .sink {  data in
+                
+                RunLoop.main.perform {
+                    if data != nil {
+                        self.fileNameLabel.text = "Файл считан"
+                    } else {
+                        self.fileNameLabel.text = "Нет Файла"
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func setupUI() {
@@ -118,15 +157,13 @@ class HomeView: UIViewController {
     }
     
     
-    @objc private func startProgramm() {
-        let canvasView = CanvasView()
-        canvasView.viewModel = viewModel
-        navigationController?.pushViewController(canvasView, animated: true)
+    @objc private func startProgramm()  {
+        viewModel?.startProgramm()
     }
     
     
     @objc private func changeColor() {
-        viewModel.color = colorSegmentedController.selectedSegmentIndex
+        viewModel?.color = colorSegmentedController.selectedSegmentIndex
     }
     
     
@@ -181,7 +218,7 @@ class HomeView: UIViewController {
         fileNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            fileNameLabel.leadingAnchor.constraint(equalTo: chooseFileButton.trailingAnchor, constant: +view.bounds.width * 0.1),
+            fileNameLabel.leadingAnchor.constraint(equalTo: chooseFileButton.trailingAnchor, constant: +view.bounds.width * 0.05),
             fileNameLabel.heightAnchor.constraint(equalTo: chooseFileButton.heightAnchor),
             fileNameLabel.topAnchor.constraint(equalTo: chooseFileButton.topAnchor),
             fileNameLabel.trailingAnchor.constraint(equalTo: colorSegmentedController.trailingAnchor)
@@ -207,7 +244,7 @@ extension HomeView: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let selectedFileURL = urls.first else { return }
         
-        viewModel.decodeFile(url: selectedFileURL)
+        viewModel?.decodeFile(url: selectedFileURL)
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
