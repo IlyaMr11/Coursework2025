@@ -88,6 +88,7 @@ class HomeView: UIViewController {
         label.text = "Нет Файла"
         label.font = .preferredFont(forTextStyle: .headline)
         label.textAlignment = .right
+        label.textColor = .black
         return label
     }()
     
@@ -107,6 +108,7 @@ class HomeView: UIViewController {
         setupStartButton()
     }
     
+    
     @objc private func chooseFile() {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.json])
                 documentPicker.delegate = self
@@ -115,16 +117,18 @@ class HomeView: UIViewController {
                 present(documentPicker, animated: true, completion: nil)
     }
     
+    
     @objc private func startProgramm() {
         let canvasView = CanvasView()
         canvasView.viewModel = viewModel
         navigationController?.pushViewController(canvasView, animated: true)
-        viewModel.decodeFile()
     }
+    
     
     @objc private func changeColor() {
         viewModel.color = colorSegmentedController.selectedSegmentIndex
     }
+    
     
     func setupTitleLabel() {
         view.addSubview(titleLabel)
@@ -203,19 +207,7 @@ extension HomeView: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let selectedFileURL = urls.first else { return }
         
-  
-        do {
-            let fileContent = try String(contentsOf: selectedFileURL, encoding: .utf8)
-            print("File content: \(fileContent)")
-            
-            
-            if let jsonData = fileContent.data(using: .utf8) {
-                let data = try JSONDecoder().decode(DataModel.self, from: jsonData)
-                viewModel.data = data
-            }
-        } catch {
-            print("Error reading file: \(error)")
-        }
+        viewModel.decodeFile(url: selectedFileURL)
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {

@@ -11,20 +11,32 @@ import Combine
 
 class ViewModel: ObservableObject {
     @Published var color: Int = 0
-    @Published var data: DataModel?
     @Published var resultView: UIView?
+    @Published var resultData: DataModel?
+    @Published var alert: Alert?
     
     
-    func decodeFile() {
+    func decodeFile(url: URL) {
+     
         Task {
             do {
-                let decodeData = try await MockDecoder.mockDecode()
-                
-                await startCalculation(data: decodeData)
+                let data = try DecodeLayer.decode(url: url)
+                await self.startCalculation(data: data)
             } catch {
-                print("error")
+                if let error = error as? AppErrors {
+                    switch error {
+                    case .invalidFile:
+                        self.alert = AppAlerts.invalidFile
+                    case .serverError:
+                        self.alert = AppAlerts.serverAlert
+                    }
+                } else {
+                    self.alert = AppAlerts.serverAlert
+                }
             }
         }
+            
+ 
         
     }
     
@@ -37,7 +49,7 @@ class ViewModel: ObservableObject {
     
     @MainActor
     func updateViewModel(data: DataModel, view: UIView) async {
-        self.data = data
+        self.resultData = data
         self.resultView = view
     }
     
