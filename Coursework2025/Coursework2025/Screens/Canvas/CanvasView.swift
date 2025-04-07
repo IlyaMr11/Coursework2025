@@ -72,8 +72,8 @@ class CanvasView: UIViewController {
                 if let newView {
                     self.canvasView.subviews.forEach { $0.removeFromSuperview() }
                     progressView.isHidden = true
-                    newView.center = self.canvasView.center
                     self.canvasView.addSubview(newView)
+                    newView.frame.origin = .zero
                 }
             }
             .store(in: &cancellables)
