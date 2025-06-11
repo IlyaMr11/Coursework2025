@@ -66,9 +66,9 @@ class CanvasView: UIViewController {
     
     viewModel.$scale
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] newView in
+      .sink { [weak self] scale in
         guard let self = self else { return }
-        self.scaleLabel.text = "\(newView)"
+        self.scaleLabel.text = String(format: "%.2f", scale)
       }
       .store(in: &cancellables)
     
