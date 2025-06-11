@@ -210,7 +210,7 @@ final class DrawingLayer {
   ]
   
   @MainActor
-  func draw(data: PlacementResult, canvasWidth: Double) -> (UIView, Double) {
+  func draw(data: PlacementResult, canvasWidth: Double, color: Bool) -> (UIView, Double) {
     let screenWidth = UIScreen.main.bounds.width * 0.95
     let scale = screenWidth / canvasWidth
     let totalHeight = data.totalHeight * scale
@@ -225,7 +225,8 @@ final class DrawingLayer {
       data: data,
       canvasWidth: canvasWidth,
       scale: scale,
-      totalHeight: totalHeight
+      totalHeight: totalHeight,
+      color: color
     )
     drawingView.frame = contentView.bounds
     
@@ -243,14 +244,15 @@ class DrawingView: UIView {
   var canvasWidth: Double
   var scale: CGFloat
   var totalHeight: CGFloat
-  var colors: [UIColor] = [.red, .blue, .green, .yellow, .orange]
+  var colors: [UIColor]
   private let shiftLayer = ShiftLayer()
   
-  init(data: PlacementResult, canvasWidth: Double, scale: CGFloat, totalHeight: CGFloat) {
+  init(data: PlacementResult, canvasWidth: Double, scale: CGFloat, totalHeight: CGFloat, color: Bool) {
     self.data = data
     self.canvasWidth = canvasWidth
     self.scale = scale
     self.totalHeight = totalHeight
+    self.colors = color ? [.red, .blue, .green, .yellow, .orange] : [.black]
     super.init(frame: .zero)
     backgroundColor = .white
   }

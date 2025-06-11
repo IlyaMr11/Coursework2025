@@ -45,28 +45,29 @@ class ViewModel: ObservableObject {
   }
   
   func startProgramm()  {
-//    guard let data = self.data else {
-//      alert = AppAlerts.fileNotSelected
-//      return
-//    }
+    guard let data = self.data else {
+      alert = AppAlerts.fileNotSelected
+      return
+    }
     
     router.showCanvasView()
     Task {
-      await startCalculation(data: PackingInput(width: 580 , figures: []))
+      await startCalculation(data: data)
     }
   }
   
   func startCalculation(data: PackingInput) async {
     let packingManager = PackingManager()
     let resultData = await packingManager.runOptimalPlacement(
-      DrawingLayer.mockFigures,
+      data.figures,
       sheetWidth: data.width,
       padding: 10
     )
     
     let (resultView, scale) = await DrawingLayer.shared.draw(
       data: resultData,
-      canvasWidth: Double(data.width)
+      canvasWidth: Double(data.width),
+      color: color
     )
 
     await updateViewModel(data: data, view: resultView, scale: scale)

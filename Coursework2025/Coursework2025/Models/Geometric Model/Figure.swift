@@ -12,8 +12,8 @@ struct Figure: Codable {
   let outCircuit: [Point]
   let inCircuit: [Point]?
   
-  init(id: UUID, outCircuit: [Point], inCircuit: [Point]? = nil) {
-    self.id = UUID()
+  init(id: UUID = UUID(), outCircuit: [Point], inCircuit: [Point]? = nil) {
+    self.id = id
     self.outCircuit = outCircuit
     self.inCircuit = inCircuit
   }

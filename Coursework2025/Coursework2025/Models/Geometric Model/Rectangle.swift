@@ -13,3 +13,15 @@ struct Rectangle {
     let minY: Double
     let maxY: Double
 }
+
+extension Rectangle {
+  func getPoints() -> [Point] {
+    [
+      .init(x: minX, y: minY),
+      .init(x: maxX, y: minY),
+      .init(x: maxX, y: maxY),
+      .init(x: minX, y: maxY),
+      .init(x: minX, y: minY)
+    ]
+  }
+}
