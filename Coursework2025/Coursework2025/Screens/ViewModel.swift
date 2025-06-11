@@ -15,6 +15,7 @@ class ViewModel: ObservableObject {
   @Published var alert: UIAlertController?
   @Published var data: PackingInput?
   @Published var scale: Double = 1
+  var runOnSimmulator: Bool = Constants.runOnSimmulator
   
   let router: Router
   
@@ -22,13 +23,19 @@ class ViewModel: ObservableObject {
     self.router = router
   }
   
-  func decodeFile(url: URL) {
+  func decodeFile(url: URL?) {
     self.data = nil
     
     Task {
       do {
-        let data = try DecodeLayer.decode(url: url)
-        self.data = data
+        if runOnSimmulator {
+          let data = try DecodeLayer.decodeTestFile(name: Constants.fileName)
+          self.data = data
+        } else {
+          let url = url!
+          let data = try DecodeLayer.decode(url: url)
+          self.data = data
+        }
       } catch {
         if let error = error as? AppErrors {
           switch error {

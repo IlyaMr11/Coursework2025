@@ -11,6 +11,7 @@ import Combine
 class HomeView: UIViewController {
   
   var viewModel: ViewModel?
+  var selectedFileURL: URL?
   
   var cancellables: Set<AnyCancellable> = []
   
@@ -100,6 +101,9 @@ class HomeView: UIViewController {
     title = "Главная"
     setupUI()
     bindViewModel()
+    if Constants.runOnSimmulator {
+      viewModel?.decodeFile(url: URL(""))
+    }
   }
   
   func bindViewModel() {
@@ -238,6 +242,7 @@ class HomeView: UIViewController {
 extension HomeView: UIDocumentPickerDelegate {
   func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
     guard let selectedFileURL = urls.first else { return }
+    self.selectedFileURL = selectedFileURL
     
     viewModel?.decodeFile(url: selectedFileURL)
   }

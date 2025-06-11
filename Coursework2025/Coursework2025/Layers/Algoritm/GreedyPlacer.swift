@@ -10,7 +10,7 @@ import Foundation
 class GreedyPlacer {
   private let shiftLayer = ShiftLayer()
   private let rotationManager = RotationManager(steps: Constants.rotationSteps)
-  private let approximator = RectApproximator(lineWidth: 20)
+  private let approximator = RectApproximator(lineWidth: Double(Constants.stripeWidth))
   private let collisionChecker = CollisionChecker()
   
   func place(
@@ -67,7 +67,7 @@ class GreedyPlacer {
     let sheetWidthDouble = Double(sheetWidth)
     
     var lowY = 0.0
-    var highY = Double(maxHeight)
+    var highY = maxHeight
     var bestPosition: Point? = nil
     while lowY <= highY {
       let midY = (lowY + highY) / 2
