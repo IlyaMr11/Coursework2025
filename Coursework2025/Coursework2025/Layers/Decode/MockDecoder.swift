@@ -15,7 +15,7 @@ class MockDecoder {
     "width": 800,
     "height": 600
   },
-  "phigures": [
+  "figures": [
     {
       "outCircuit": [
         {
@@ -61,13 +61,13 @@ class MockDecoder {
 }
 """
     
-    static func mockDecode() async throws -> DataModel {
+    static func mockDecode() async throws -> PackingInput {
         guard let jsonData = mockJSONstring.data(using: .utf8) else {
             throw NSError(domain: "Error", code: 1, userInfo: nil)
         }
         
         do {
-            let decodedData = try JSONDecoder().decode(DataModel.self, from: jsonData)
+            let decodedData = try JSONDecoder().decode(PackingInput.self, from: jsonData)
             return decodedData
         } catch {
             print("Error decoding JSON: \(error)")
